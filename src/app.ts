@@ -13,16 +13,37 @@ app.use(express.json());
 //app.use(cors({ origin: '*' }));
 
 //for productions { origin: '*' }
+const allowedOrigins = [
+  'https://tech-tip.onrender.com', // ✅ Correct frontend URL
+  'https://techtip-backend.vercel.app/', // ✅ (Optional)
+  //  for testing
+];
+
 app.use(
   cors({
-    origin: 'https://tech-tip.onrender.com/',
-    credentials: true, // Allows cookies and headers
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('CORS policy error: This origin is not allowed'));
+      }
+    },
+    credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     allowedHeaders:
       'Origin, X-Requested-With, Content-Type, Accept, Authorization',
   }),
 );
 
+// app.use(
+//   cors({
+//     origin: 'https://tech-tip.onrender.com/',
+//     credentials: true, // Allows cookies and headers
+//     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+//     allowedHeaders:
+//       'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+//   }),
+// );
 //app.use(cors({ origin: config.Frontent_API }));
 
 app.use('/api', router);
